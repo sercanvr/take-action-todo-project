@@ -1,26 +1,111 @@
+/* Bu dosya uygulamanın global stillerini, tooltip, scrollbar, seçim rengi ve Liquid Glass temasını içerir. */
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --accent: #f5c155;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+}
+
+/* ── Metin Seçim Rengi (::selection) — Proje rengi ── */
+::selection {
+  background-color: #f5c155;
+  color: #000000;
+}
+
+/* ── Scrollbar Teması ── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #f5c155;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #e0a830;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #f5c155 transparent;
+}
+
+/* ── Özel Tooltip Sistemi ── */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 50;
+  background-color: #f5c155;
+  color: #ffffff;
+  border: 1px solid #e0a830;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* Sil butonu için kırmızı tooltip */
+[data-tooltip-red]::after {
+  background-color: #ef4444;
+  border-color: #dc2626;
+}
+
+/* Tooltip aşağı yönlü (Header tema butonu gibi sayfanın üst kısmındaki elemanlar için) */
+[data-tooltip-pos="bottom"]::after {
+  bottom: auto;
+  top: 100%;
+  margin-bottom: 0;
+  margin-top: 6px;
+}
+
+/* ── Liquid Glass (Cam Efekti) Sınıfı ── */
+.glass-dark {
+  background: rgba(23, 23, 23, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(255, 255, 255, 0.08);
+  border-style: solid;
+  border-width: 1px;
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(0, 0, 0, 0.08);
+  border-style: solid;
+  border-width: 1px;
 }
