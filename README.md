@@ -1,40 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Take Action TODO
+
+A full-stack CRUD Todo application built with **Next.js**, **Prisma**, **MongoDB Atlas**, **Zustand**, and **Tailwind CSS**.
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (Pages Router) |
+| UI | React 19, Tailwind CSS 4 |
+| State | Zustand |
+| ORM | Prisma |
+| Database | MongoDB Atlas |
+| Notifications | react-hot-toast (custom wave cards) |
+
+## Features
+
+- **Full CRUD** — Create, read, update, and delete todos
+- **Inline Editing** — Edit todo titles directly with Enter/Escape keyboard support
+- **Completion Toggle** — Mark todos as completed or reopen them
+- **Dark / Light Mode** — Toggle between themes with consistent accent color
+- **Progress Tracker** — Gradient-border card showing completed/total count
+- **Custom Toasts** — 4 types (success, warn, error, info) with wave-card design
+- **Scroll to Top** — Fixed button appears on scroll
+- **Responsive** — Works on desktop and mobile
+- **Long Text Handling** — Overflowing todo titles word-break automatically
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── Header.js          # Logo + dark/light toggle
+│   ├── ProgressCard.js    # Completed task counter card
+│   ├── TodoForm.js        # New todo input + add button
+│   ├── TodoItem.js        # Single todo row (checkbox, edit, delete)
+│   ├── TodoList.js        # Todo list container
+│   ├── ScrollToTop.js     # Scroll-to-top button
+│   └── Footer.js          # Copyright footer
+├── lib/
+│   ├── prisma.js          # Prisma singleton client
+│   └── toast.js           # Custom toast notification system
+├── pages/
+│   ├── index.js           # Main page
+│   ├── _app.js            # App wrapper (Toaster provider)
+│   ├── _document.js       # HTML skeleton (favicon, fonts)
+│   └── api/todos/
+│       ├── index.js       # GET (list) + POST (create)
+│       └── [id].js        # PUT (update) + DELETE
+├── services/
+│   └── todoService.js     # Fetch abstraction layer
+├── store/
+│   └── useTodoStore.js    # Zustand global state
+└── styles/
+    └── globals.css        # Tailwind, tooltips, scrollbar, glass effects
+```
+
+## API Endpoints
+
+| Method | Endpoint | Description | Body |
+|---|---|---|---|
+| GET | /api/todos | List all todos | — |
+| POST | /api/todos | Create a todo | `{ "title": "string" }` |
+| PUT | /api/todos/[id] | Update a todo | `{ "title": "string", "completed": bool }` |
+| DELETE | /api/todos/[id] | Delete a todo | — |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- MongoDB Atlas account (or local MongoDB)
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/your-username/take-action-todo.git
+cd take-action-todo
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+# Create a .env file in the root directory:
+DATABASE_URL="mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<dbname>"
+
+# Generate Prisma client
+npx prisma generate
+
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Scripts
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+| Command | Description |
+|---|---|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm start` | Start production server |
+| `npm run lint` | Run ESLint |
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+## License
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+This project is for demonstration purposes.
