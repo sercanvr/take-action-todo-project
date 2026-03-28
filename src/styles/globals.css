@@ -9,13 +9,14 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  /* Arkaplan Tailwind tarafına (index.js) bırakıldı */
   font-family:
     system-ui,
     -apple-system,
     "Segoe UI",
     sans-serif;
+  overflow-y: scroll; /* Scrollbar çıktığında ekranın sola kaymasını engeller */
+  scrollbar-gutter: stable; /* Modern tarayıcılarda kaymayı önlemek için ekstra alan ayırır */
 }
 
 /* ── Metin Seçim Rengi (::selection) — Proje rengi ── */
@@ -48,6 +49,7 @@ body {
   scrollbar-color: #f5c155 transparent;
 }
 
+/* ══════════════════════════════════════════════════════════════
 /* ── Özel Tooltip Sistemi ── */
 [data-tooltip] {
   position: relative;
@@ -69,7 +71,8 @@ body {
   opacity: 0;
   z-index: 50;
   background-color: #f5c155;
-  color: #ffffff;
+  color: #1e293b;
+  font-weight: 600;
   border: 1px solid #e0a830;
 }
 
@@ -81,6 +84,14 @@ body {
 [data-tooltip-red]::after {
   background-color: #ef4444;
   border-color: #dc2626;
+  color: #fff;
+}
+
+/* Tamamla butonu için yeşil tooltip */
+[data-tooltip-green]::after {
+  background-color: #10b981;
+  border-color: #059669;
+  color: #fff;
 }
 
 /* Tooltip aşağı yönlü (Header tema butonu gibi sayfanın üst kısmındaki elemanlar için) */
@@ -108,4 +119,227 @@ body {
   border-color: rgba(0, 0, 0, 0.08);
   border-style: solid;
   border-width: 1px;
+}
+
+/* ── Skeleton Loading Animation ── */
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(200, 20%, 80%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 95%);
+  }
+}
+
+.skeleton {
+  animation: skeleton-loading 1.5s infinite alternate;
+  border-radius: 8px;
+}
+
+.dark .skeleton {
+  animation-name: skeleton-loading-dark;
+}
+
+@keyframes skeleton-loading-dark {
+  0% {
+    background-color: hsl(200, 20%, 20%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 30%);
+  }
+}
+
+\n
+
+
+
+/* === MODERN TOAST STYLES === */
+:root {
+  --toast-duration: 4s;
+}
+
+/* Base Toast Styles */
+[data-sonner-toast] {
+  background: white !important;
+  color: #111827 !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  padding-right: 48px !important; /* reserve space for close button */
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+}
+
+/* Modals should not exceed mobile viewport width. accommodate margins */
+@media (max-width: 640px) {
+  [data-sonner-toaster] {
+    left: 16px !important;
+    right: auto !important;
+    transform: none !important;
+    width: calc(
+      100vw - 100px
+    ) !important; /* Sağdaki butona yer bırakmak için */
+    max-width: 280px !important;
+  }
+  [data-sonner-toast] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Theme Borders */
+[data-sonner-toast][data-type="success"] {
+  border: 2px solid #10b981 !important;
+}
+[data-sonner-toast][data-type="error"] {
+  border: 2px solid #ef4444 !important;
+}
+[data-sonner-toast][data-type="warning"] {
+  border: 2px solid #f59e0b !important;
+}
+[data-sonner-toast][data-type="info"] {
+  border: 2px solid #3b82f6 !important;
+}
+
+/* Custom Avatar / Icons */
+[data-sonner-toast] [data-icon] {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  margin-right: 12px !important;
+}
+[data-sonner-toast] [data-icon] svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Themed Icon Colors */
+[data-sonner-toast][data-type="success"] [data-icon] {
+  background: #10b981 !important;
+  color: #fff !important;
+}
+[data-sonner-toast][data-type="success"] [data-icon] svg {
+  fill: none !important;
+  stroke: currentColor !important;
+  color: #fff !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-icon] {
+  background: #ef4444 !important;
+  color: #fff !important;
+}
+[data-sonner-toast][data-type="error"] [data-icon] svg {
+  fill: none !important;
+  stroke: currentColor !important;
+  color: #fff !important;
+}
+
+[data-sonner-toast][data-type="warning"] [data-icon] {
+  background: #f59e0b !important;
+  color: #fff !important;
+}
+[data-sonner-toast][data-type="warning"] [data-icon] svg {
+  fill: none !important;
+  stroke: currentColor !important;
+  color: #fff !important;
+}
+
+[data-sonner-toast][data-type="info"] [data-icon] {
+  background: #3b82f6 !important;
+  color: #fff !important;
+}
+[data-sonner-toast][data-type="info"] [data-icon] svg {
+  fill: none !important;
+  stroke: currentColor !important;
+  color: #fff !important;
+}
+
+/* Text Area */
+[data-sonner-toast] [data-content] {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #111827 !important;
+  flex: 1 !important;
+}
+
+/* Progress-Bar */
+[data-sonner-toast]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 0%;
+}
+[data-sonner-toast][data-type="success"]::after {
+  background: #10b981;
+  animation: s_prog var(--toast-duration) linear forwards;
+}
+[data-sonner-toast][data-type="error"]::after {
+  background: #ef4444;
+  animation: s_prog var(--toast-duration) linear forwards;
+}
+[data-sonner-toast][data-type="warning"]::after {
+  background: #f59e0b;
+  animation: s_prog var(--toast-duration) linear forwards;
+}
+[data-sonner-toast][data-type="info"]::after {
+  background: #3b82f6;
+  animation: s_prog var(--toast-duration) linear forwards;
+}
+
+@keyframes s_prog {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+[data-sonner-toast]:hover::after {
+  animation-play-state: paused !important;
+}
+
+/* Elegant Close Button */
+.my-toast-close-btn {
+  background: #ef4444 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  opacity: 1 !important;
+  left: auto !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 99 !important;
+  transition: all 0.2s ease !important;
+}
+.my-toast-close-btn:hover {
+  background: #dc2626 !important;
+  color: #fff !important;
+}
+
+[data-tooltip-blue]::after {
+  background-color: #3b82f6;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+/* Desktop (kaydırma çubuğu fiziki yer kaplayan cihazlar) için kayma engeli */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
 }

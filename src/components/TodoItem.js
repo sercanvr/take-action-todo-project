@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import useTodoStore from "@/store/useTodoStore";
+import { Check, Edit2, Trash2 } from "lucide-react";
 
 export default function TodoItem({ todo, darkMode }) {
   // Zustand aksiyonları
@@ -15,16 +16,25 @@ export default function TodoItem({ todo, darkMode }) {
 
   // Düzenlemeyi kaydet
   const handleSave = async () => {
-    if (!editTitle.trim()) return;
-    if (editTitle.trim() !== todo.title) {
-      await editTodo(todo.id, editTitle.trim());
+    if (!isEditing) return;
+    setIsEditing(false); // Prevents duplicate calls
+
+    const newLabel = editTitle.trim();
+    if (!newLabel) {
+      setEditTitle(todo.title);
+      return;
     }
-    setIsEditing(false);
+    if (newLabel !== todo.title) {
+      await editTodo(todo.id, newLabel);
+    }
   };
 
   // Enter tuşuyla kaydet, Escape ile iptal et
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") handleSave();
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSave();
+    }
     if (e.key === "Escape") {
       setEditTitle(todo.title);
       setIsEditing(false);
@@ -45,19 +55,18 @@ export default function TodoItem({ todo, darkMode }) {
       {/* Checkbox: Tamamlanma durumunu değiştir */}
       <button
         onClick={() => toggleTodo(todo.id)}
-        className="shrink-0 cursor-pointer"
+        className="shrink-0 cursor-pointer group/check"
         data-tooltip={todo.completed ? "Tamamlanmadı olarak işaretle" : "Tamamlandı olarak işaretle"}
+        data-tooltip-green
       >
         {todo.completed ? (
           // Tamamlanmış: Yeşil dolu daire
           <span className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="white" className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-            </svg>
+            <Check size={16} strokeWidth={2.5} className="text-white" />
           </span>
         ) : (
-          // Tamamlanmamış: Boş kırmızımsı çerçeve
-          <span className="flex items-center justify-center w-6 h-6 rounded-full border-2 border-red-400" />
+          // Tamamlanmamış: Boş kırmızımsı çerçeve (Hover'da yeşil olur)
+          <span className="flex items-center justify-center w-6 h-6 rounded-full border-2 border-red-400 group-hover/check:border-emerald-500 transition-colors" />
         )}
       </button>
 
@@ -101,14 +110,13 @@ export default function TodoItem({ todo, darkMode }) {
           }}
           className={`transition-colors cursor-pointer ${
             darkMode
-              ? "text-stone-400 hover:text-[#f5c155]"
-              : "text-neutral-400 hover:text-[#f5c155]"
+              ? "text-stone-400 hover:text-blue-400"
+              : "text-neutral-400 hover:text-blue-500"
           }`}
           data-tooltip="Düzenle"
+          data-tooltip-blue
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-          </svg>
+          <Edit2 size={20} strokeWidth={1.5} />
         </button>
 
         {/* Sil butonu */}
@@ -122,9 +130,7 @@ export default function TodoItem({ todo, darkMode }) {
           data-tooltip="Sil"
           data-tooltip-red
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-          </svg>
+          <Trash2 size={20} strokeWidth={1.5} />
         </button>
       </div>
     </div>

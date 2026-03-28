@@ -11,6 +11,7 @@ datasource db {
 
 model Todo {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   // Her todo belirli bir user'a ait
   title       String
   completed   Boolean  @default(false)
   createdAt   DateTime @default(now())

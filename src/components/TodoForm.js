@@ -3,6 +3,7 @@
 import { useState } from "react";
 import useTodoStore from "@/store/useTodoStore";
 import { showToast } from "@/lib/toast";
+import { PlusCircle } from "lucide-react";
 
 export default function TodoForm({ darkMode }) {
   // Lokal state: sadece bu input'un değerini tutar
@@ -42,23 +43,17 @@ export default function TodoForm({ darkMode }) {
         }`}
       />
 
-      {/* Ekleme butonu — SVG daireli + ikonu */}
+      {/* Ekleme butonu */}
       <button
         type="submit"
         className="group cursor-pointer outline-none shrink-0"
         data-tooltip="Görev ekle"
       >
-        <svg
-          className="stroke-[#f5c155] fill-none group-hover:fill-[#f5c155]/30 group-active:stroke-[#f5d580] group-active:fill-[#f5c155]/50 group-active:duration-0 duration-300"
-          viewBox="0 0 24 24"
-          height="44px"
-          width="44px"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path strokeWidth="1.5" d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" />
-          <path strokeWidth="1.5" d="M8 12H16" />
-          <path strokeWidth="1.5" d="M12 16V8" />
-        </svg>
+        <PlusCircle 
+           size={44} 
+           strokeWidth={1.5} 
+           className="text-[#f5c155] fill-transparent group-hover:fill-[#f5c155]/30 group-active:text-[#f5d580] group-active:fill-[#f5c155]/50 group-active:duration-0 duration-300"
+        />
       </button>
     </form>
   );
