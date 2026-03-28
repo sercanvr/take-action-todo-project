@@ -5,18 +5,6 @@ import TodoItem from "@/components/TodoItem";
 
 export default function TodoList({ darkMode }) {
   const todos = useTodoStore((state) => state.todos);
-  const loading = useTodoStore((state) => state.loading);
-
-  // Yükleniyor durumu
-  if (loading) {
-    return (
-      <div className="w-full max-w-3xl mx-auto px-4 text-center py-8">
-        <p className={darkMode ? "text-stone-500" : "text-neutral-400"}>
-          Görevler yükleniyor...
-        </p>
-      </div>
-    );
-  }
 
   // Görev yoksa bilgilendirme mesajı
   if (todos.length === 0) {

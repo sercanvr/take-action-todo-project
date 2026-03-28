@@ -35,7 +35,7 @@ export default function ScrollToTop({ darkMode }) {
         height: "44px",
         borderWidth: "2px",
         borderStyle: "solid",
-        borderColor: "#ffffff",
+        borderColor: darkMode ? "#ffffff" : "#1e293b",
         backgroundColor: "#f5c155",
       }}
       className="rounded-xl flex items-center justify-center cursor-pointer text-white hover:opacity-90"

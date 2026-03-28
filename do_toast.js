@@ -1,4 +1,5 @@
-import { toast } from "sonner";
+const fs = require('fs');
+let toastContent = \import { toast } from "sonner";
 import { CheckCircle, AlertTriangle, XCircle, Info } from "lucide-react";
 
 // Basari (yesil)
@@ -34,3 +35,6 @@ function info(message, subText = "") {
 }
 
 export const showToast = { success, warn, error, info };
+\;
+fs.writeFileSync('src/lib/toast.js', toastContent);
+console.log('done toast');

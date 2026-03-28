@@ -1,64 +1,65 @@
-// Bu dosya tek bir görevi güncelleme (PUT) ve silme (DELETE) API uç noktasıdır.
-
 import prisma from "@/lib/prisma";
+import { sanitizeTitle } from "@/lib/sanitize";
+import { updateTodoSchema, userIdSchema } from "@/lib/validation";
 
 export default async function handler(req, res) {
-  const { id } = req.query;
+  const { id, userId } = req.query;
 
-  // MongoDB ObjectID formatı kontrolü (24 haneli hex string)
   if (!id || !/^[a-fA-F0-9]{24}$/.test(id)) {
     return res.status(400).json({ message: "Geçersiz görev ID formatı." });
   }
 
-  // ── PUT: Görevi güncelle ──
+  const parsedUserId = userIdSchema.safeParse(userId);
+  if (!parsedUserId.success) {
+    return res.status(400).json({ message: parsedUserId.error.errors[0].message });
+  }
+
   if (req.method === "PUT") {
     try {
-      const { title, completed } = req.body;
+      const parsedBody = updateTodoSchema.safeParse(req.body);
+      if (!parsedBody.success) {
+        return res.status(400).json({ message: parsedBody.error.errors[0].message });
+      }
 
-      // Güncellenecek alanları dinamik olarak hazırla
+      const { title, completed } = parsedBody.data;
+
+      const todo = await prisma.todo.findUnique({ where: { id } });
+      if (!todo) return res.status(404).json({ message: "Gorev bulunamadi." });
+      if (todo.userId !== parsedUserId.data) return res.status(403).json({ message: "Yetkisiz islem." });
+
       const data = {};
-      if (title !== undefined) data.title = title.trim();
+      if (title !== undefined) {
+        const sanitizedTitle = sanitizeTitle(title);
+        if (sanitizedTitle) data.title = sanitizedTitle;
+      }
       if (completed !== undefined) data.completed = completed;
 
-      // En az bir alan gönderilmiş mi kontrol et
       if (Object.keys(data).length === 0) {
-        return res.status(400).json({ message: "Güncellenecek bir alan gönderilmedi." });
+        return res.status(400).json({ message: "Guncellenecek alan yok." });
       }
 
-      const updatedTodo = await prisma.todo.update({
-        where: { id },
-        data,
-      });
-
+      const updatedTodo = await prisma.todo.update({ where: { id }, data });
       return res.status(200).json(updatedTodo);
     } catch (error) {
-      // Prisma: Kayıt bulunamadı hatası
-      if (error.code === "P2025") {
-        return res.status(404).json({ message: "Görev bulunamadı." });
-      }
-      console.error("Görev güncellenirken hata:", error);
+      console.error(error);
       return res.status(500).json({ message: "Görev güncellenemedi." });
     }
   }
 
-  // ── DELETE: Görevi sil ──
   if (req.method === "DELETE") {
     try {
-      await prisma.todo.delete({
-        where: { id },
-      });
+      const todo = await prisma.todo.findUnique({ where: { id } });
+      if (!todo) return res.status(404).json({ message: "Gorev bulunamadi." });
+      if (todo.userId !== parsedUserId.data) return res.status(403).json({ message: "Yetkisiz islem." });
 
-      return res.status(200).json({ message: "Görev başarıyla silindi." });
+      await prisma.todo.delete({ where: { id } });
+      return res.status(200).json({ message: "Gorev silindi." });
     } catch (error) {
-      if (error.code === "P2025") {
-        return res.status(404).json({ message: "Görev bulunamadı." });
-      }
-      console.error("Görev silinirken hata:", error);
-      return res.status(500).json({ message: "Görev silinemedi." });
+      console.error(error);
+      return res.status(500).json({ message: "Gorev silinemedi." });
     }
   }
 
-  // ── Desteklenmeyen metot ──
   res.setHeader("Allow", ["PUT", "DELETE"]);
-  return res.status(405).json({ message: `${req.method} metodu desteklenmiyor.` });
+  return res.status(405).json({ message: req.method + " desteklenmiyor." });
 }

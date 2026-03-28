@@ -1,43 +1,55 @@
-// Bu dosya tüm görevleri listeleme (GET) ve yeni görev ekleme (POST) API uç noktasıdır.
-
 import prisma from "@/lib/prisma";
+import { sanitizeTitle } from "@/lib/sanitize";
+import { createTodoSchema, userIdSchema } from "@/lib/validation";
 
 export default async function handler(req, res) {
-  // ── GET: Tüm görevleri listele ──
   if (req.method === "GET") {
     try {
+      const parsedQuery = userIdSchema.safeParse(req.query.userId);
+      if (!parsedQuery.success) {
+        return res.status(400).json({ message: parsedQuery.error.errors[0].message });
+      }
+
+      const userId = parsedQuery.data;
       const todos = await prisma.todo.findMany({
-        orderBy: { createdAt: "desc" },
+        where: { userId },
+        orderBy: { createdAt: "asc" },
       });
       return res.status(200).json(todos);
     } catch (error) {
-      console.error("Görevler getirilirken hata:", error);
-      return res.status(500).json({ message: "Görevler getirilemedi." });
+      console.error(error);
+      return res.status(500).json({ message: "Gorevler getirilemedi." }); 
     }
   }
 
-  // ── POST: Yeni görev ekle ──
   if (req.method === "POST") {
     try {
-      const { title } = req.body;
+      const parsedBody = createTodoSchema.safeParse(req.body);
+      if (!parsedBody.success) {
+         return res.status(400).json({ message: parsedBody.error.errors[0].message });
+      }
 
-      // Boş başlık kontrolü
-      if (!title || title.trim() === "") {
-        return res.status(400).json({ message: "Görev başlığı boş olamaz." });
+      const { title, userId } = parsedBody.data;
+      const sanitizedTitle = sanitizeTitle(title);
+
+      if (!sanitizedTitle) {
+        return res.status(400).json({ message: "Gorev basligi bos olamaz." });
       }
 
       const newTodo = await prisma.todo.create({
-        data: { title: title.trim() },
+        data: {
+          title: sanitizedTitle,
+          userId,
+        },
       });
 
       return res.status(201).json(newTodo);
     } catch (error) {
-      console.error("Görev eklenirken hata:", error);
-      return res.status(500).json({ message: "Görev eklenemedi." });
+      console.error(error);
+      return res.status(500).json({ message: "Gorev eklenemedi." });
     }
   }
 
-  // ── Desteklenmeyen metot ──
   res.setHeader("Allow", ["GET", "POST"]);
-  return res.status(405).json({ message: `${req.method} metodu desteklenmiyor.` });
+  return res.status(405).json({ message: req.method + " metodu desteklenmiyor." });
 }

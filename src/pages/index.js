@@ -21,6 +21,11 @@ export default function Home() {
     loadTodos();
   }, [loadTodos]);
 
+  // Ekranın en sağındaki scrollbar alanının (body) rengini temanıza senkronize edin
+  useEffect(() => {
+    document.body.className = darkMode ? "bg-neutral-950" : "bg-neutral-50";
+  }, [darkMode]);
+
   return (
     <>
       <Head>
